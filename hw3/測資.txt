@@ -1,0 +1,67 @@
+2
+3 A B C
+4 D E F G
+ENQUEUE A
+ENQUEUE D
+ENQUEUE C
+DEQUEUE
+ENQUEUE B
+ENQUEUE H
+ENQUEUE F
+DEQUEUE
+DEQUEUE
+DEQUEUE
+DEQUEUE
+DEQUEUE
+
+
+group_number = -1;
+                    for(i = 0; i < group_exist_count; i++){
+                        if(strchr(member[i], now->customer)){
+                            group_number = i;
+                            break;
+                        }
+                    }
+                    if(group_number != -1){
+                        int insert_number = 0;
+                        ptr = head;
+                        while(ptr != NULL){
+                            ptr = ptr->next;
+                            insert_number ++;
+                            if(strchr(member[group_number], ptr->customer)){
+                                break;
+                            }
+                        }
+                        if(ptr == NULL){
+                            ptr = head;
+                            while(ptr->next != NULL){
+                                ptr = ptr->next;
+                            }
+                            ptr->next = now;
+                        }else{
+                            int k;
+                            ptr = head;
+                            for(k = 0; k < (insert_number - 1); k++){
+                                ptr = ptr->next;
+                                now->next = ptr->next;
+                                ptr->next = now;
+                            }
+
+                        }
+                        
+                    }else{
+                        ptr = head;
+                        while(ptr->next != NULL){
+                            ptr = ptr->next;
+                        }
+                        ptr->next = now;
+                    }  
+                }  
+                printf("group_number = %d\n", group_number);
+3
+3 4 
+1 2 4
+4 5
+4 3 4 7
+5 7 
+2 4 3 1 2
