@@ -73,17 +73,26 @@ queue* Dequeue(int target, queue *head){
     }
     return head;
 }
-// void relax(queue* head, int vertex, int* distance, int *processor, char  (*path)[1024]){
-//     queue* ptr;
-//     ptr = head;
-//     while(ptr != NULL){    
-//         if(distance[ptr->data] > (distance[vertex] + ptr->weight)){
-//             distance[ptr->data] = distance[vertex] + ptr->weight;
-//             processor[ptr->data] = vertex;
-//         }
-//         ptr = ptr->next;
-//     }
-// }
+void count_ee(queue* head, int event, int* ee, int* activity){
+    queue* ptr;
+    ptr = head;
+    while(ptr != NULL){    
+        if((ee[ptr->data] + activity[ptr->activity]) > ee[event]){
+            ee[event] = (ee[ptr->data] + activity[ptr->activity]);
+        }
+        ptr = ptr->next;
+    }
+}
+void count_le(queue* head, int event, int* le, int* activity){
+    queue* ptr;
+    ptr = head;
+    while(ptr != NULL){    
+        if((le[ptr->data] - activity[ptr->activity]) < le[event]){
+            le[event] = le[ptr->data] - activity[ptr->activity];
+        }
+        ptr = ptr->next;
+    }
+}
 int main(){
     int i, activity_number;
     int act, vertex1, vertex2, duration;
@@ -91,10 +100,12 @@ int main(){
     int activity[activity_number + 1];
     int vertex[activity_number + 1];
     int vertex_number = 0;
+    queue* processorhead[activity_number + 1];
     queue* listhead[activity_number + 1];
     queue* ptr;
     for(i = 0; i < (activity_number + 1); i++){
         vertex[i] = 0;
+        processorhead[i] = NULL;
         listhead[i] = NULL;
     }
     for(i = 0; i < activity_number; i++){
@@ -108,9 +119,36 @@ int main(){
             vertex_number++;
         }
         activity[act] = duration;
+        processorhead[vertex2] = activityEnqueue(vertex1, act, processorhead[vertex2]);
         listhead[vertex1] = activityEnqueue(vertex2, act, listhead[vertex1]);
     }
+    int ee[vertex_number], le[vertex_number];
+    int e[activity_number + 1], l[activity_number + 1], slack[activity_number + 1], critical[activity_number + 1]; 
+    // for(i = 0; i < vertex_number; i++){
+    //     ptr = processorhead[i];
+    //     printf("%d", i);
+    //     while(ptr != NULL){
+    //         printf("pro = %d", ptr->data);
+    //         ptr = ptr->next;
+    //     }
+    //     printf("\n");
+    // }
     for(i = 0; i < vertex_number; i++){
-        
+        ee[i] = -1;
+    }
+    ee[0] = 0;
+    for(i = 1; i < vertex_number; i++){
+        count_ee(processorhead[i], i, ee, activity);
+    }
+    for(i = 0; i < vertex_number; i++){
+        le[i] = ee[vertex_number - 1];
+    }
+    le[(vertex_number - 1)] = ee[vertex_number - 1];
+    for(i = (vertex_number - 2); i >= 0; i--){
+        count_le(listhead[i], i, le, activity);
+    }
+    for(i = 0; i < vertex_number; i++){
+        printf("ee[%d] = %d ", i, ee[i]);
+        printf("le[%d] = %d\n", i, le[i]);
     }
 }
