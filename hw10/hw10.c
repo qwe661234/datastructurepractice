@@ -24,13 +24,14 @@ void quicksort(int* a, int left, int right){
             }
         }while(i < j);
         swap(a, left, j);
-        if((j - 1 - left) < (right - j  - 1)){
+        //if((j - 1 - left) > (right - j  - 1)){
+        //if((j - 1 - left) < (right - j  - 1)){
             quicksort(a, left, j - 1);
             quicksort(a, j + 1, right);
-        }else{
-            quicksort(a, j + 1, right);
-            quicksort(a, left, j - 1);
-        }
+        // }else{
+        //     quicksort(a, j + 1, right);
+        //     quicksort(a, left, j - 1);
+        // }
     }
 }
 int selectMiddle(int* a, int left, int right){
@@ -81,8 +82,14 @@ void middleQuicksort(int* a, int left, int right){
     int middle;
     if(left < right){
         middle = findMiddle(a, left, right);
-        middleQuicksort(a, left, middle - 1);
-        middleQuicksort(a, middle + 1, right);
+        // if((middle - 1 - left) > (right - middle  - 1)){
+        // if((middle - 1 - left) < (right - middle  - 1)){
+            middleQuicksort(a, left, middle - 1);
+            middleQuicksort(a, middle + 1, right);
+        // }else{
+        //     middleQuicksort(a, middle + 1, right);
+        //     middleQuicksort(a, left, middle - 1);
+        // }
     }
 }
 int main(int argc, char* argv[]){
@@ -92,15 +99,19 @@ int main(int argc, char* argv[]){
     FILE *fptr;
     int count = 0;
     int i;
-    int a[100000];
-    fptr = fopen("b.txt", "r");
+    int a[1000000];
+    fptr = fopen("aa.txt", "r");
     while(fscanf(fptr, "%d", &a[count]) != EOF){
         count ++;
     }
+    //quicksort(a, 0, count - 1);
     middleQuicksort(a, 0, count - 1);
-    printf("%d", count);
-    printf("\n");
     end = clock(); 
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC; 
-    printf("use leftmost and longer fist execution time = %f\n", cpu_time_used);
+    //printf("use leftmost and longer fist execution time = %f\n", cpu_time_used);
+    //printf("use leftmost and shorter fist execution time = %f\n", cpu_time_used);
+    printf("use leftmost and original fist execution time = %f\n", cpu_time_used);
+    //printf("use median of three and longer fist execution time = %f\n", cpu_time_used);
+    //printf("use median of three and shorter fist execution time = %f\n", cpu_time_used);
+    //printf("use median of three and original fist execution time = %f\n", cpu_time_used);
 }
